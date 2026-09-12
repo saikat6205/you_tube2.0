@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 
 interface RelatedVideosProps {
@@ -7,12 +6,18 @@ interface RelatedVideosProps {
     _id: string;
     videotitle: string;
     videochanel: string;
+    filepath: string;
     views: number;
     createdAt: string;
   }>;
 }
-const vid = "/video/vdo.mp4";
+
 export default function RelatedVideos({ videos }: RelatedVideosProps) {
+  if (!videos?.length) {
+    return (
+      <div className="text-sm text-gray-500">No related videos found.</div>
+    );
+  }
   return (
     <div className="space-y-2">
       {videos.map((video) => (
@@ -23,7 +28,7 @@ export default function RelatedVideos({ videos }: RelatedVideosProps) {
         >
           <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden flex-shrink-0">
             <video
-              src={vid}
+              src={`${process.env.BACKEND_URL}/${video.filepath}`}
               className="object-cover group-hover:scale-105 transition-transform duration-200"
             />
           </div>
@@ -33,7 +38,7 @@ export default function RelatedVideos({ videos }: RelatedVideosProps) {
             </h3>
             <p className="text-xs text-gray-600 mt-1">{video.videochanel}</p>
             <p className="text-xs text-gray-600">
-              {video.views.toLocaleString()} views •{" "}
+              {(video.views || 0).toLocaleString()} views •{" "}
               {formatDistanceToNow(new Date(video.createdAt))} ago
             </p>
           </div>

@@ -31,7 +31,7 @@ const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
   useEffect(() => {
     if (channeldata && mode === "edit") {
       setFormData({
-        name: channeldata.name || "",
+        name: channeldata.channelname || "",
         description: channeldata.description || "",
       });
     } else {
@@ -49,21 +49,30 @@ const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
   };
   const handlesubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    if (!formData.name.trim()) return;
     const payload = {
       channelname: formData.name,
       description: formData.description,
     };
-    const response = await axiosInstance.patch(
-      `/user/update/${user._id}`,
-      payload
-    );
-    login(response?.data);
-    router.push(`/channel/${user?._id}`);
-    setFormData({
-      name: "",
-      description: "",
-    });
-    onclose();
+    setisSubmitting(true);
+    try {
+      const response = await axiosInstance.patch(
+        `/user/update/${user._id}`,
+        payload
+      );
+      login(response?.data);
+      router.push(`/channel/${user?._id}`);
+      setFormData({
+        name: "",
+        description: "",
+      });
+      onclose();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setisSubmitting(false);
+    }
   };
   return (
     <Dialog open={isopen} onOpenChange={onclose}>

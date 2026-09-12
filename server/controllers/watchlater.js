@@ -1,7 +1,7 @@
 import watchlater from "../Modals/watchlater.js";
 
 export const handlewatchlater = async (req, res) => {
-  const { userId } = req.body;
+  const userId = req.userId || req.body.userId;
   const { videoId } = req.params;
   try {
     const exisitingwatchlater = await watchlater.findOne({
@@ -15,6 +15,36 @@ export const handlewatchlater = async (req, res) => {
       await watchlater.create({ viewer: userId, videoid: videoId });
       return res.status(200).json({ watchlater: true });
     }
+  } catch (error) {
+    console.error(" error:", error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const removewatchlater = async (req, res) => {
+  const userId = req.userId || req.body.userId;
+  const { videoId } = req.params;
+  try {
+    const removed = await watchlater.findOneAndDelete({
+      viewer: userId,
+      videoid: videoId,
+    });
+    if (!removed) {
+      return res.status(404).json({ message: "Video not in watch later" });
+    }
+    return res.status(200).json({ watchlater: false });
+  } catch (error) {
+    console.error(" error:", error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const watchlaterStatus = async (req, res) => {
+  const userId = req.userId || req.body.userId;
+  const { videoId } = req.params;
+  try {
+    const existing = await watchlater.findOne({ viewer: userId, videoid: videoId });
+    return res.status(200).json({ watchlater: !!existing });
   } catch (error) {
     console.error(" error:", error);
     return res.status(500).json({ message: "Something went wrong" });

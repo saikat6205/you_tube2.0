@@ -1,4 +1,4 @@
-# Dependencies
+    # Dependencies
 node_modules/
 .pnp
 .pnp.*
@@ -9,6 +9,7 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+!.env.example
 
 # Builds
 .next/

@@ -10,13 +10,18 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (userdata) => {
+  const login = (data) => {
+    const userdata = data?.result || data;
     setUser(userdata);
     localStorage.setItem("user", JSON.stringify(userdata));
+    if (data?.token) {
+      localStorage.setItem("token", data.token);
+    }
   };
   const logout = async () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     try {
       await signOut(auth);
     } catch (error) {
@@ -33,7 +38,7 @@ export const UserProvider = ({ children }) => {
         image: firebaseuser.photoURL || "https://github.com/shadcn.png",
       };
       const response = await axiosInstance.post("/user/login", payload);
-      login(response.data.result);
+      login(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -48,7 +53,7 @@ export const UserProvider = ({ children }) => {
             image: firebaseuser.photoURL || "https://github.com/shadcn.png",
           };
           const response = await axiosInstance.post("/user/login", payload);
-          login(response.data.result);
+          login(response.data);
         } catch (error) {
           console.error(error);
           logout();

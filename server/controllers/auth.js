@@ -1,28 +1,56 @@
 import mongoose from "mongoose";
 import users from "../Modals/Auth.js";
+import jwt from "jsonwebtoken";
+
+const signToken = (user) =>
+  jwt.sign(
+    { id: user._id.toString(), email: user.email },
+    process.env.JWT_SECRET || "yourtube_secret_key",
+    { expiresIn: "7d" }
+  );
 
 export const login = async (req, res) => {
   const { email, name, image } = req.body;
 
   try {
-    const existingUser = await users.findOne({ email });
+    let user = await users.findOne({ email });
 
-    if (!existingUser) {
-      const newUser = await users.create({ email, name, image });
-      return res.status(201).json({ result: newUser });
-    } else {
-      return res.status(200).json({ result: existingUser });
+    if (!user) {
+      user = await users.create({ email, name, image });
     }
+    const token = signToken(user);
+    return res.status(200).json({ result: user, token });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const getuser = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  try {
+    const user = await users.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 export const updateprofile = async (req, res) => {
   const { id: _id } = req.params;
   const { channelname, description } = req.body;
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return res.status(500).json({ message: "User unavailable..." });
+  }
+  if (req.userId && req.userId !== _id) {
+    return res.status(403).json({ message: "You can only update your own profile" });
   }
   try {
     const updatedata = await users.findByIdAndUpdate(

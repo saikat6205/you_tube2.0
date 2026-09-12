@@ -1,6 +1,5 @@
-import HistoryContent from "@/components/HistoryContent";
 import LikedContent from "@/components/LikedContent";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 
 const index = () => {
   return (

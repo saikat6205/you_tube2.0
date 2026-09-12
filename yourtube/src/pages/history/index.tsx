@@ -1,5 +1,5 @@
 import HistoryContent from "@/components/HistoryContent";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 
 const index = () => {
   return (
