@@ -1,6 +1,6 @@
 import axios from "axios";
 const axiosInstance = axios.create({
-  baseURL: process.env.BACKEND_URL,
+  baseURL: process.env.BACKEND_URL || "http://localhost:5000",
 });
 
 axiosInstance.interceptors.request.use((config) => {

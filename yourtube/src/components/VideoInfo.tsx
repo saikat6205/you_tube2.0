@@ -12,6 +12,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@/lib/AuthContext";
 import axiosInstance from "@/lib/axiosinstance";
+import { toast } from "sonner";
 import Link from "next/link";
 
 const VideoInfo = ({ video }: any) => {
@@ -124,6 +125,28 @@ const VideoInfo = ({ video }: any) => {
     }
   };
 
+  const handleDownload = async () => {
+    if (!user) return toast.error("Please sign in to download videos");
+    try {
+      const res = await axiosInstance.get(`/download/${video._id}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(res.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = video.filename || `video_${video._id}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Download started");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Download failed. Please try again."
+      );
+    }
+  };
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">{video.videotitle}</h1>
@@ -198,6 +221,7 @@ const VideoInfo = ({ video }: any) => {
             variant="ghost"
             size="sm"
             className="bg-gray-100 rounded-full"
+            onClick={handleDownload}
           >
             <Download className="w-5 h-5 mr-2" />
             Download
