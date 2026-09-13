@@ -3,7 +3,7 @@ import download from "../Modals/download.js";
 import users from "../Modals/Auth.js";
 import fs from "fs";
 import path from "path";
-import { PLANS } from "../config/plans.js";
+import { getPlan } from "../config/plans.js";
 
 const startOfDay = () => new Date(new Date().setHours(0, 0, 0, 0));
 
@@ -19,21 +19,27 @@ export const downloadvideo = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
-    const plan = user.plan || "free";
-    const limit = PLANS[plan] ?? PLANS.free;
+    const planInfo = getPlan(user.plan || "free");
+    if (file.ispremium && !planInfo.premiumAccess) {
+      return res.status(403).json({
+        message:
+          "This is a premium video. Upgrade your plan to download it.",
+      });
+    }
+    const limit = planInfo.downloadsPerDay;
     const usedToday = await download.countDocuments({
       userid: userId,
       downloadedon: { $gte: startOfDay() },
     });
     if (usedToday >= limit) {
       return res.status(429).json({
-        message: `Daily download limit reached (${usedToday}/${limit} for ${plan} plan). Try again tomorrow.`,
+        message: `Daily download limit reached (${usedToday}/${limit} for ${planInfo.name} plan). Upgrade or try again tomorrow.`,
       });
     }
     if (!fs.existsSync(file.filepath)) {
       return res.status(500).json({ message: "Video file not found on server" });
     }
-    await download.create({ userid: userId, videoid: videoId, plan: plan });
+    await download.create({ userid: userId, videoid: videoId, plan: user.plan || "free" });
     await video.findByIdAndUpdate(videoId, { $inc: { downloads: 1 } });
     const filename = file.filename || `${file._id}.mp4`;
     res.download(path.resolve(file.filepath), filename, (err) => {
@@ -72,16 +78,24 @@ export const getlimits = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
-    const plan = user.plan || "free";
-    const limit = PLANS[plan] ?? PLANS.free;
+    const planInfo = getPlan(user.plan || "free");
+    const limit = planInfo.downloadsPerDay;
     const usedToday = await download.countDocuments({
       userid: userId,
       downloadedon: { $gte: startOfDay() },
     });
-    const remaining = limit === Infinity ? Infinity : Math.max(0, limit - usedToday);
-    return res
-      .status(200)
-      .json({ plan, limit, usedToday, remaining });
+    const remaining =
+      limit === Infinity ? Infinity : Math.max(0, limit - usedToday);
+    return res.status(200).json({
+      plan: user.plan,
+      planName: planInfo.name,
+      downloadsPerDay: limit,
+      usedToday,
+      remaining,
+      watchMinutesPerDay: planInfo.watchMinutesPerDay,
+      adFree: planInfo.adFree,
+      premiumAccess: planInfo.premiumAccess,
+    });
   } catch (error) {
     console.error(" error:", error);
     return res.status(500).json({ message: "Something went wrong" });

@@ -1,4 +1,4 @@
-import { Check, FileVideo, Upload, X } from "lucide-react";
+import { Check, FileVideo, Upload, X, Lock } from "lucide-react";
 import React, { ChangeEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -12,6 +12,7 @@ const VideoUploader = ({ channelId, channelName }: any) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoTitle, setVideoTitle] = useState("");
+  const [isPremium, setIsPremium] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handlefilechange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +59,7 @@ const VideoUploader = ({ channelId, channelName }: any) => {
     formdata.append("videotitle", videoTitle);
     formdata.append("videochanel", channelName);
     formdata.append("uploader", channelId);
+    formdata.append("ispremium", String(isPremium));
     try {
       setIsUploading(true);
       setUploadProgress(0);
@@ -142,6 +144,17 @@ const VideoUploader = ({ channelId, channelName }: any) => {
                   className="mt-1"
                 />
               </div>
+              <label className="flex items-center gap-2 text-sm cursor-pointer pt-1">
+                <input
+                  type="checkbox"
+                  checked={isPremium}
+                  onChange={(e) => setIsPremium(e.target.checked)}
+                  disabled={isUploading || uploadComplete}
+                  className="w-4 h-4 accent-red-600"
+                />
+                <Lock className="w-4 h-4 text-amber-500" />
+                Mark as premium — only subscribed users can watch this video
+              </label>
             </div>
 
             {isUploading && (

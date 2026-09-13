@@ -12,6 +12,8 @@ import watchlaterroutes from "./routes/watchlater.js";
 import downloadroutes from "./routes/download.js";
 import historyrroutes from "./routes/history.js";
 import commentroutes from "./routes/comment.js";
+import paymentroutes from "./routes/payment.js";
+import plansroutes from "./routes/plans.js";
 dotenv.config();
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const app = express();
@@ -32,6 +34,8 @@ app.use("/watch", watchlaterroutes);
 app.use("/download", downloadroutes);
 app.use("/history", historyrroutes);
 app.use("/comment", commentroutes);
+app.use("/payment", paymentroutes);
+app.use("/plans", plansroutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

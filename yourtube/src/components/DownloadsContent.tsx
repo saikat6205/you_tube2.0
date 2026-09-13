@@ -3,25 +3,18 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Download, FolderDown } from "lucide-react";
+import { Crown, Download, FolderDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import VideoThumb from "@/components/VideoThumb";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosinstance";
 import { useUser } from "@/lib/AuthContext";
-
-const PLAN_OPTIONS = [
-  { value: "free", label: "Free - 1 download/day" },
-  { value: "premium", label: "Premium - 10 downloads/day" },
-  { value: "premium_plus", label: "Premium Plus - Unlimited" },
-];
 
 export default function DownloadsContent() {
   const [downloads, setDownloads] = useState<any[]>([]);
   const [limits, setLimits] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [updatingPlan, setUpdatingPlan] = useState(false);
-  const { user, login } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     if (user) {
@@ -52,25 +45,6 @@ export default function DownloadsContent() {
     }
   };
 
-  const handlePlanChange = async (e: any) => {
-    const plan = e.target.value;
-    if (!user || plan === limits?.plan) return;
-    setUpdatingPlan(true);
-    try {
-      const res = await axiosInstance.patch(`/user/update/${user._id}`, {
-        plan,
-      });
-      login(res.data);
-      await loadLimits();
-      toast.success(`Plan updated to ${plan}`);
-    } catch (error) {
-      console.error("Error updating plan:", error);
-      toast.error("Failed to update plan");
-    } finally {
-      setUpdatingPlan(false);
-    }
-  };
-
   if (!user) {
     return (
       <div className="text-center py-12">
@@ -86,9 +60,13 @@ export default function DownloadsContent() {
   }
 
   const limitLabel =
-    limits?.limit === Infinity ? "Unlimited" : `${limits?.limit ?? 0} downloads/day`;
+    limits?.downloadsPerDay === Infinity
+      ? "Unlimited"
+      : `${limits?.downloadsPerDay ?? 0} downloads/day`;
   const remainingLabel =
-    limits?.remaining === Infinity ? "Unlimited" : `${limits?.remaining ?? 0} remaining today`;
+    limits?.remaining === Infinity
+      ? "Unlimited"
+      : `${limits?.remaining ?? 0} remaining today`;
 
   return (
     <div className="space-y-6">
@@ -96,30 +74,27 @@ export default function DownloadsContent() {
         <div className="flex items-center gap-3">
           <FolderDown className="w-6 h-6 text-gray-500" />
           <div>
-            <p className="font-medium capitalize">{limits?.plan ?? "free"} plan</p>
+            <p className="font-medium capitalize">
+              {limits?.planName || limits?.plan || "free"} plan
+            </p>
             <p className="text-sm text-gray-600">
               {limitLabel} • {limits?.usedToday ?? 0} used today • {remainingLabel}
             </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {limits?.adFree ? "Ad-free viewing" : "Free plan shows ads"}{" "}
+              •{" "}
+              {limits?.watchMinutesPerDay === Infinity
+                ? "Unlimited watch time"
+                : `${limits?.watchMinutesPerDay ?? 60} min watch time per day`}
+            </p>
           </div>
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="plan" className="text-xs text-gray-500">
-            Plan (demo upgrade)
-          </Label>
-          <select
-            id="plan"
-            value={limits?.plan ?? "free"}
-            onChange={handlePlanChange}
-            disabled={updatingPlan}
-            className="block w-full md:w-64 rounded-md border border-gray-300 bg-white py-1.5 px-3 text-sm"
-          >
-            {PLAN_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Link href="/upgrade">
+          <Button className="bg-red-600 hover:bg-red-700 text-white">
+            <Crown className="w-4 h-4 mr-2" />
+            Upgrade plan
+          </Button>
+        </Link>
       </div>
 
       {downloads.length === 0 ? (
@@ -134,15 +109,16 @@ export default function DownloadsContent() {
       ) : (
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            {downloads.length} total {downloads.length === 1 ? "download" : "downloads"}
+            {downloads.length} total{" "}
+            {downloads.length === 1 ? "download" : "downloads"}
           </p>
           {downloads.map((item) => (
             <div key={item._id} className="flex gap-4 group">
               <Link href={`/watch/${item.videoid._id}`} className="flex-shrink-0">
                 <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden">
-                  <video
-                    src={`${process.env.BACKEND_URL}/${item.videoid?.filepath}`}
-                    className="object-cover group-hover:scale-105 transition-transform duration-200"
+                  <VideoThumb
+                    video={item.videoid}
+                    className="group-hover:scale-105 transition-transform duration-200 w-full h-full"
                   />
                 </div>
               </Link>
@@ -159,17 +135,13 @@ export default function DownloadsContent() {
                   {formatDistanceToNow(new Date(item.videoid.createdAt))} ago
                 </p>
                 <p className="text-xs text-gray-500 mt-1 capitalize">
-                  Downloaded {formatDistanceToNow(new Date(item.downloadedon))} ago
+                  Downloaded {formatDistanceToNow(new Date(item.downloadedon))}{" "}
+                  ago
                   {item.plan && ` • ${item.plan} plan`}
                 </p>
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="self-center"
-                asChild
-              >
+              <Button variant="ghost" size="sm" className="self-center" asChild>
                 <Link href={`/watch/${item.videoid._id}`}>Watch again</Link>
               </Button>
             </div>

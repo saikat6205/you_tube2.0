@@ -6,6 +6,9 @@ const userschema = mongoose.Schema({
   description: { type: String },
   image: { type: String },
   plan: { type: String, default: "free" },
+  watchDate: { type: String, default: "" },
+  watchSecondsUsed: { type: Number, default: 0 },
+  planExpiry: { type: Date },
   joinedon: { type: Date, default: Date.now },
 });
 

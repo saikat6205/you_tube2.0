@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import VideoThumb from "@/components/VideoThumb";
 import axiosInstance from "@/lib/axiosinstance";
 
 const SearchResult = ({ query }: any) => {
@@ -66,9 +67,9 @@ const SearchResult = ({ query }: any) => {
           <div key={video._id} className="flex gap-4 group">
             <Link href={`/watch/${video._id}`} className="flex-shrink-0">
               <div className="relative w-80 aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                <video
-                  src={`${process.env.BACKEND_URL}/${video?.filepath}`}
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                <VideoThumb
+                  video={video}
+                  className="group-hover:scale-105 transition-transform duration-200 w-full h-full"
                 />
               </div>
             </Link>

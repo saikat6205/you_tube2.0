@@ -1,4 +1,4 @@
-import { Bell, Menu, Mic, Search, User, VideoIcon } from "lucide-react";
+import { Bell, Crown, Menu, Mic, Search, User, VideoIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -74,6 +74,14 @@ const Header = () => {
       <div className="flex items-center gap-2">
         {user ? (
           <>
+            <Button variant="ghost" size="icon" asChild>
+              <Link
+                href="/upgrade"
+                className="flex items-center gap-1 text-xs font-medium capitalize"
+              >
+                <Crown className="w-5 h-5 text-amber-500" />
+              </Link>
+            </Button>
             <Button variant="ghost" size="icon">
               <VideoIcon className="w-6 h-6" />
             </Button>
@@ -120,6 +128,9 @@ const Header = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/downloads">Downloads</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/upgrade">Upgrade plan</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>Sign out</DropdownMenuItem>

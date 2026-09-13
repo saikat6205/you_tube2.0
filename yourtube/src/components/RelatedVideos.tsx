@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import VideoThumb from "./VideoThumb";
 
 interface RelatedVideosProps {
   videos: Array<{
@@ -9,6 +10,7 @@ interface RelatedVideosProps {
     filepath: string;
     views: number;
     createdAt: string;
+    ispremium?: boolean;
   }>;
 }
 
@@ -27,9 +29,9 @@ export default function RelatedVideos({ videos }: RelatedVideosProps) {
           className="flex gap-2 group"
         >
           <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden flex-shrink-0">
-            <video
-              src={`${process.env.BACKEND_URL}/${video.filepath}`}
-              className="object-cover group-hover:scale-105 transition-transform duration-200"
+            <VideoThumb
+              video={video}
+              className="object-cover group-hover:scale-105 transition-transform duration-200 w-full h-full"
             />
           </div>
           <div className="flex-1 min-w-0">

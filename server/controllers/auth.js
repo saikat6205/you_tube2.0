@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import users from "../Modals/Auth.js";
 import jwt from "jsonwebtoken";
-import { PLAN_NAMES } from "../config/plans.js";
 
 const signToken = (user) =>
   jwt.sign(
@@ -46,7 +45,7 @@ export const getuser = async (req, res) => {
 
 export const updateprofile = async (req, res) => {
   const { id: _id } = req.params;
-  const { channelname, description, plan } = req.body;
+  const { channelname, description } = req.body;
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return res.status(500).json({ message: "User unavailable..." });
   }
@@ -54,9 +53,6 @@ export const updateprofile = async (req, res) => {
     return res.status(403).json({ message: "You can only update your own profile" });
   }
   const setfields = { channelname: channelname, description: description };
-  if (plan && PLAN_NAMES.includes(plan)) {
-    setfields.plan = plan;
-  }
   try {
     const updatedata = await users.findByIdAndUpdate(
       _id,
