@@ -110,7 +110,8 @@ export const verifyPayment = async (req, res) => {
     record.razorpaySignature = razorpaySignature || "mock_signature";
     record.status = "paid";
     await record.save();
-    const planExpiry = new Date();
+    const now = new Date();
+    const planExpiry = new Date(now);
     planExpiry.setMonth(planExpiry.getMonth() + 1);
     const updatedUser = await users.findByIdAndUpdate(
       userId,
@@ -126,6 +127,9 @@ export const verifyPayment = async (req, res) => {
         currency: record.currency,
         paymentId: record.razorpayPaymentId,
         orderId: razorpayOrderId,
+        paymentDate: now,
+        subscriptionStart: now,
+        subscriptionEnd: planExpiry,
       });
     } catch (mailErr) {
       console.error("Email send error:", mailErr);
