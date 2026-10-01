@@ -1,4 +1,5 @@
 import { Lock } from "lucide-react";
+import { encodeFilePath } from "@/lib/utils";
 
 export default function VideoThumb({
   video,
@@ -29,7 +30,7 @@ export default function VideoThumb({
   }
   return (
     <video
-      src={`${process.env.BACKEND_URL}/${video?.filepath}`}
+      src={`${process.env.BACKEND_URL}/${encodeFilePath(video?.filepath ?? "")}`}
       className={`object-cover ${className}`}
     />
   );

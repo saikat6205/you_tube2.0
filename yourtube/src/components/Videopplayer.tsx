@@ -2,8 +2,9 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
-import { Crown, Lock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Crown, Lock } from "lucide-react";
 import axiosInstance from "@/lib/axiosinstance";
+import { encodeFilePath } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 interface VideoPlayerProps {
@@ -15,14 +16,21 @@ interface VideoPlayerProps {
   };
   remainingSeconds?: number | null;
   adFree?: boolean;
+  nextVideo?: { _id: string; videotitle: string } | null;
+  previousVideo?: { _id: string; videotitle: string } | null;
+  onVideoChange?: (videoId: string) => void;
 }
 
 const HEARTBEAT_INTERVAL = 30000;
+const NAV_HIDE_DELAY = 2500;
 
 export default function VideoPlayer({
   video,
   remainingSeconds,
   adFree,
+  nextVideo,
+  previousVideo,
+  onVideoChange,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<string | null>(null);
@@ -32,6 +40,33 @@ export default function VideoPlayer({
     remainingSeconds ?? null
   );
   const lastReportedRef = useRef(0);
+  const autoplayPendingRef = useRef(false);
+  const [showNav, setShowNav] = useState(false);
+  const showNavRef = useRef(false);
+  const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    },
+    []
+  );
+
+  const hideNavLater = () => {
+    if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    navTimerRef.current = setTimeout(() => {
+      showNavRef.current = false;
+      setShowNav(false);
+    }, NAV_HIDE_DELAY);
+  };
+
+  const revealNav = () => {
+    if (!showNavRef.current) {
+      showNavRef.current = true;
+      setShowNav(true);
+    }
+    hideNavLater();
+  };
 
   useEffect(() => {
     const token =
@@ -52,7 +87,7 @@ export default function VideoPlayer({
         )}`
       );
     } else if (!video.ispremium) {
-      setSrc(`${process.env.BACKEND_URL}/${video.filepath}`);
+      setSrc(`${process.env.BACKEND_URL}/${encodeFilePath(video.filepath)}`);
     } else {
       setSrc(null);
     }
@@ -100,14 +135,60 @@ export default function VideoPlayer({
     lastReportedRef.current = videoEl.currentTime || 0;
   };
 
+  const goToVideo = (target?: { _id: string; videotitle: string } | null) => {
+    if (!target?._id || !onVideoChange) return;
+    autoplayPendingRef.current = true;
+    onVideoChange(target._id);
+    if (showNavRef.current) {
+      showNavRef.current = false;
+      setShowNav(false);
+    }
+  };
+
+  const handleEnded = () => {
+    if (!nextVideo?._id || !onVideoChange) return;
+    autoplayPendingRef.current = true;
+    onVideoChange(nextVideo._id);
+  };
+
+  useEffect(() => {
+    if (!src || !autoplayPendingRef.current) return;
+    autoplayPendingRef.current = false;
+    const videoEl = videoRef.current;
+    if (!videoEl) return;
+
+    const tryPlay = () => {
+      videoEl.play().catch(() => {});
+    };
+
+    if (videoEl.readyState >= videoEl.HAVE_METADATA) {
+      tryPlay();
+      return;
+    }
+
+    const onReady = () => tryPlay();
+    videoEl.addEventListener("loadedmetadata", onReady, { once: true });
+    return () => videoEl.removeEventListener("loadedmetadata", onReady);
+  }, [src]);
+
   return (
-    <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
+    <div
+      className="aspect-video bg-black rounded-lg overflow-hidden relative"
+      onMouseMove={revealNav}
+      onMouseEnter={revealNav}
+      onMouseLeave={hideNavLater}
+      onTouchStart={revealNav}
+      onTouchMove={revealNav}
+      onTouchEnd={hideNavLater}
+    >
       {src ? (
         <video
+          key={src}
           ref={videoRef}
           className="w-full h-full"
           controls
           onPlay={handlePlay}
+          onEnded={handleEnded}
           onPause={() => {
             if (videoRef.current)
               lastReportedRef.current = videoRef.current.currentTime;
@@ -157,6 +238,34 @@ export default function VideoPlayer({
           <Lock className="w-3 h-3" />
           Free plan shows ads — upgrade for ad-free viewing
         </div>
+      )}
+
+      {showNav && onVideoChange && !limitReached && (
+        <>
+          {previousVideo?._id && (
+            <button
+              type="button"
+              onClick={() => goToVideo(previousVideo)}
+              title={previousVideo.videotitle}
+              aria-label="Previous video"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/85 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+          )}
+
+          {nextVideo?._id && (
+            <button
+              type="button"
+              onClick={() => goToVideo(nextVideo)}
+              title={nextVideo.videotitle}
+              aria-label="Next video"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/85 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          )}
+        </>
       )}
     </div>
   );

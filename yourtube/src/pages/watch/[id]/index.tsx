@@ -62,6 +62,26 @@ const index = () => {
     [allVideos, id]
   );
 
+  const currentIndex = useMemo(
+    () => allVideos.findIndex((vid: any) => vid._id === id),
+    [allVideos, id]
+  );
+
+  const nextVideo = useMemo(() => {
+    if (currentIndex < 0 || currentIndex >= allVideos.length - 1) return null;
+    return allVideos[currentIndex + 1] ?? null;
+  }, [allVideos, currentIndex]);
+
+  const previousVideo = useMemo(() => {
+    if (currentIndex <= 0) return null;
+    return allVideos[currentIndex - 1] ?? null;
+  }, [allVideos, currentIndex]);
+
+  const handleVideoChange = (videoId: string) => {
+    if (!videoId || videoId === id) return;
+    router.push(`/watch/${videoId}`);
+  };
+
   if (loading) {
     return <div>Loading..</div>;
   }
@@ -102,6 +122,9 @@ const index = () => {
                 video={video}
                 remainingSeconds={watchStatus?.remainingSeconds}
                 adFree={watchStatus?.adFree}
+                nextVideo={nextVideo}
+                previousVideo={previousVideo}
+                onVideoChange={handleVideoChange}
               />
             )}
             <VideoInfo video={video} />
