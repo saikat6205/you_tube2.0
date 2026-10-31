@@ -128,7 +128,7 @@ const WatchPage = () => {
               />
             )}
             <VideoInfo video={video} />
-            <Comments videoId={id} />
+            {typeof id === "string" && <Comments videoId={id} />}
           </div>
           <div className="space-y-4">
             <RelatedVideos videos={relatedVideos} />

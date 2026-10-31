@@ -33,6 +33,10 @@ const userschema = mongoose.Schema({
   // "manual" -> user picked it; never overwritten automatically
   themeSource: { type: String, enum: ["auto", "manual"], default: "auto" },
   trustedDevices: { type: [trustedDeviceSchema], default: [] },
+  // Preferred language for translating comments shown to this user.
+  preferredLanguage: { type: String, default: "en" },
+  // Opt-in: attach coarse state/country to new comments. Defaults to private.
+  showLocation: { type: Boolean, default: false },
 });
 
 export default mongoose.model("user", userschema);

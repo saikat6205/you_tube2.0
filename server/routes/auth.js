@@ -6,6 +6,7 @@ import {
   verifyotp,
   resendotp,
   settheme,
+  updatepreferences,
 } from "../controllers/auth.js";
 import auth from "../middleware/auth.js";
 import { createRateLimit } from "../middleware/rateLimit.js";
@@ -33,6 +34,7 @@ routes.post("/login", loginLimiter, login);
 routes.post("/verify-otp", verifyLimiter, verifyotp);
 routes.post("/otp/resend", resendLimiter, resendotp);
 routes.patch("/theme", auth, settheme);
+routes.patch("/preferences", auth, updatepreferences);
 routes.get("/:id", getuser);
 routes.patch("/update/:id", auth, updateprofile);
 export default routes;

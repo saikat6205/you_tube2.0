@@ -8,6 +8,9 @@ import { resolveThemeFromLoginTime, formatIstTime } from "../utils/theme.js";
 import { sendLoginOtpEmail } from "../utils/mailer.js";
 import { verifyFirebaseIdToken } from "../utils/firebase.js";
 import { findTrustedDevice, mergeTrustedDevice } from "../utils/trust.js";
+import { isAdminEmail } from "../utils/admin.js";
+import { isSupportedLanguage } from "../utils/language.js";
+import comment from "../Modals/comment.js";
 
 const signToken = (user) =>
   jwt.sign(
@@ -22,6 +25,9 @@ const publicUser = (user) => {
   const plain =
     typeof user.toObject === "function" ? user.toObject() : { ...user };
   delete plain.trustedDevices;
+  plain.preferredLanguage = plain.preferredLanguage || "en";
+  plain.showLocation = Boolean(plain.showLocation);
+  plain.isAdmin = isAdminEmail(plain.email);
   return plain;
 };
 
@@ -309,6 +315,53 @@ export const getuser = async (req, res) => {
     return res.status(200).json(publicUser(user));
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const updatepreferences = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.userId)) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const user = await users.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { preferredLanguage, showLocation } = req.body;
+
+    if (preferredLanguage !== undefined) {
+      if (!isSupportedLanguage(preferredLanguage)) {
+        return res.status(400).json({ message: "Unsupported language" });
+      }
+      user.preferredLanguage = String(preferredLanguage).trim().toLowerCase();
+    }
+
+    let clearExistingLocations = false;
+    if (showLocation !== undefined) {
+      if (typeof showLocation !== "boolean") {
+        return res
+          .status(400)
+          .json({ message: "showLocation must be a boolean" });
+      }
+      user.showLocation = showLocation;
+      clearExistingLocations = showLocation === false;
+    }
+
+    await user.save();
+
+    if (clearExistingLocations) {
+      // Turning the setting off also removes coarse locations from past comments.
+      await comment.updateMany(
+        { userid: user._id },
+        { $set: { locationLabel: "" } }
+      );
+    }
+
+    return res.status(200).json(publicUser(user));
+  } catch (error) {
+    console.error("Update preferences error:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 };

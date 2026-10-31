@@ -156,6 +156,11 @@ const Header = () => {
                 <DropdownMenuItem asChild>
                   <Link href="/upgrade">Upgrade plan</Link>
                 </DropdownMenuItem>
+                {user?.isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/moderation">Moderation</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
