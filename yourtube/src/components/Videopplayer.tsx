@@ -205,7 +205,7 @@ export default function VideoPlayer({
             Premium
           </div>
           <p className="text-lg font-medium">Premium video</p>
-          <p className="text-sm text-gray-400">Sign in with a paid plan to watch</p>
+          <p className="text-sm text-muted-foreground">Sign in with a paid plan to watch</p>
           <Link href="/upgrade">
             <Button className="bg-red-600 hover:bg-red-700 text-white">
               <Crown className="w-4 h-4 mr-2" />
@@ -218,7 +218,7 @@ export default function VideoPlayer({
       {limitReached && (
         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white gap-3">
           <p className="text-lg font-medium">Daily watch limit reached</p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-muted-foreground">
             You have used all your watch time for today.
           </p>
           <Link href="/upgrade">
@@ -227,7 +227,7 @@ export default function VideoPlayer({
               Upgrade for more watch time
             </Button>
           </Link>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Your watch time resets tomorrow.
           </p>
         </div>

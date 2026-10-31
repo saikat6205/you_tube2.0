@@ -48,9 +48,9 @@ export default function DownloadsContent() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <Download className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+        <Download className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
         <h2 className="text-xl font-semibold mb-2">Manage your downloads</h2>
-        <p className="text-gray-600">Sign in to view and manage downloads.</p>
+        <p className="text-muted-foreground">Sign in to view and manage downloads.</p>
       </div>
     );
   }
@@ -70,17 +70,17 @@ export default function DownloadsContent() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gray-50 rounded-lg p-4 border flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-muted rounded-lg p-4 border flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <FolderDown className="w-6 h-6 text-gray-500" />
+          <FolderDown className="w-6 h-6 text-muted-foreground" />
           <div>
             <p className="font-medium capitalize">
               {limits?.planName || limits?.plan || "free"} plan
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               {limitLabel} • {limits?.usedToday ?? 0} used today • {remainingLabel}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {limits?.adFree ? "Ad-free viewing" : "Free plan shows ads"}{" "}
               •{" "}
               {limits?.watchMinutesPerDay === Infinity
@@ -99,23 +99,23 @@ export default function DownloadsContent() {
 
       {downloads.length === 0 ? (
         <div className="text-center py-12">
-          <Download className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+          <Download className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold mb-2">No downloads yet</h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Videos you download will appear here. Free users get 1 download per
             day.
           </p>
         </div>
       ) : (
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {downloads.length} total{" "}
             {downloads.length === 1 ? "download" : "downloads"}
           </p>
           {downloads.map((item) => (
             <div key={item._id} className="flex gap-4 group">
               <Link href={`/watch/${item.videoid._id}`} className="flex-shrink-0">
-                <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden">
+                <div className="relative w-40 aspect-video bg-muted rounded overflow-hidden">
                   <VideoThumb
                     video={item.videoid}
                     className="group-hover:scale-105 transition-transform duration-200 w-full h-full"
@@ -129,12 +129,12 @@ export default function DownloadsContent() {
                     {item.videoid.videotitle}
                   </h3>
                 </Link>
-                <p className="text-sm text-gray-600">{item.videoid.videochanel}</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">{item.videoid.videochanel}</p>
+                <p className="text-sm text-muted-foreground">
                   {(item.videoid.views || 0).toLocaleString()} views •{" "}
                   {formatDistanceToNow(new Date(item.videoid.createdAt))} ago
                 </p>
-                <p className="text-xs text-gray-500 mt-1 capitalize">
+                <p className="text-xs text-muted-foreground mt-1 capitalize">
                   Downloaded {formatDistanceToNow(new Date(item.downloadedon))}{" "}
                   ago
                   {item.plan && ` • ${item.plan} plan`}

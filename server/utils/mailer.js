@@ -80,7 +80,8 @@ const sendViaBrevo = async ({ fromEmail, fromName, toEmail, toName, subject, htm
   }
   const body = await res.json().catch(() => ({}));
   console.log(
-    `Invoice email sent to ${toEmail} via Brevo (messageId: ${body.messageId || "?"})`
+    `Email accepted by Brevo for ${toEmail} (messageId: ${body.messageId || "?"}). ` +
+      "Acceptance is not delivery: check Brevo logs for bounce/error events."
   );
   return body;
 };
@@ -96,7 +97,96 @@ const sendViaSmtp = async ({ from, toEmail, subject, html }) => {
     },
   });
   await transporter.sendMail({ from, to: toEmail, subject, html });
-  console.log(`Invoice email sent to ${toEmail} via SMTP`);
+  console.log(`Email sent to ${toEmail} via SMTP`);
+};
+
+const buildLoginOtpHtml = ({ name, email, code, city, state, deviceLabel }) => `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: #ff0000; padding: 16px; text-align: center;">
+        <h1 style="color: white; margin: 0;">YourTube</h1>
+      </div>
+      <div style="padding: 24px; border: 1px solid #e5e5e5;">
+        <h2 style="margin-top: 0;">Verify your sign-in</h2>
+        <p>Hi ${name || "there"},</p>
+        <p>We noticed a sign-in from a location or device we have not seen before, so we need to confirm it is you.</p>
+        <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin: 16px 0;">
+          <p style="margin: 4px 0;"><strong>Location:</strong> ${city || "Unknown"}, ${state || "Unknown"}</p>
+          <p style="margin: 4px 0;"><strong>Device:</strong> ${deviceLabel || "New device"}</p>
+          <p style="margin: 4px 0;"><strong>Account:</strong> ${email}</p>
+        </div>
+        <p style="text-align: center; margin: 24px 0;">
+          <span style="display: inline-block; font-size: 32px; letter-spacing: 8px; font-weight: bold; background: #f5f5f5; padding: 16px 24px; border-radius: 8px;">${code}</span>
+        </p>
+        <p>This 6-digit code can be used once and expires shortly.</p>
+        <p>If this was not you, do not share the code and review your account activity.</p>
+      </div>
+      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">
+        &copy; ${new Date().getFullYear()} YourTube. All rights reserved.
+      </div>
+    </div>
+  `;
+
+const deliverOtp = async ({ toEmail, toName, subject, html }) => {
+  const smtpReady = Boolean(process.env.MAIL_USER && process.env.MAIL_PASS);
+  const useBrevo = Boolean(process.env.BREVO_API_KEY);
+
+  if (!smtpReady && !useBrevo) {
+    console.warn(
+      "No mail provider configured, skipping OTP email. Set MAIL_USER/MAIL_PASS or BREVO_API_KEY."
+    );
+    return;
+  }
+
+  // SMTP first when explicitly configured. If it is configured but fails we do
+  // NOT silently fall back to Brevo: Brevo can accept a request and still drop
+  // the message (e.g. "sending platform disabled"), which would show the user an
+  // OTP screen for a code that never arrived. Failing loudly lets them retry.
+  if (smtpReady) {
+    return sendViaSmtp({
+      from: process.env.MAIL_FROM || `YourTube <${process.env.MAIL_USER}>`,
+      toEmail,
+      subject,
+      html,
+    });
+  }
+
+  const fromEmail =
+    process.env.BREVO_FROM_EMAIL || process.env.MAIL_FROM_EMAIL || process.env.MAIL_USER;
+  if (!fromEmail) {
+    throw new Error("Brevo sender email not configured (set BREVO_FROM_EMAIL)");
+  }
+  return sendViaBrevo({
+    fromEmail,
+    fromName: process.env.BREVO_FROM_NAME || "YourTube",
+    toEmail,
+    toName,
+    subject,
+    html,
+  });
+};
+
+export const sendLoginOtpEmail = async ({
+  email,
+  name,
+  code,
+  city,
+  state,
+  deviceLabel,
+}) => {
+  const html = buildLoginOtpHtml({
+    name,
+    email,
+    code,
+    city,
+    state,
+    deviceLabel,
+  });
+  return deliverOtp({
+    toEmail: email,
+    toName: name,
+    subject: `${code} is your YourTube verification code`,
+    html,
+  });
 };
 
 export const sendPaymentEmail = async ({

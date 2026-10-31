@@ -163,13 +163,13 @@ const VideoInfo = ({ video }: any) => {
             >
               {video.videochanel}
             </Link>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               {(video.views || 0).toLocaleString()} views
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-gray-100 rounded-full">
+          <div className="flex items-center bg-muted rounded-full">
             <Button
               variant="ghost"
               size="sm"
@@ -178,12 +178,12 @@ const VideoInfo = ({ video }: any) => {
             >
               <ThumbsUp
                 className={`w-5 h-5 mr-2 ${
-                  isLiked ? "fill-black text-black" : ""
+                  isLiked ? "fill-foreground text-foreground" : ""
                 }`}
               />
               {(likes || 0).toLocaleString()}
             </Button>
-            <div className="w-px h-6 bg-gray-300" />
+            <div className="w-px h-6 bg-border" />
             <Button
               variant="ghost"
               size="sm"
@@ -192,7 +192,7 @@ const VideoInfo = ({ video }: any) => {
             >
               <ThumbsDown
                 className={`w-5 h-5 mr-2 ${
-                  isDisliked ? "fill-black text-black" : ""
+                  isDisliked ? "fill-foreground text-foreground" : ""
                 }`}
               />
               {(dislikes || 0).toLocaleString()}
@@ -201,7 +201,7 @@ const VideoInfo = ({ video }: any) => {
           <Button
             variant="ghost"
             size="sm"
-            className={`bg-gray-100 rounded-full ${
+            className={`bg-muted rounded-full ${
               isWatchLater ? "text-primary" : ""
             }`}
             onClick={handleWatchLater}
@@ -212,7 +212,7 @@ const VideoInfo = ({ video }: any) => {
           <Button
             variant="ghost"
             size="sm"
-            className="bg-gray-100 rounded-full"
+            className="bg-muted rounded-full"
           >
             <Share className="w-5 h-5 mr-2" />
             Share
@@ -220,7 +220,7 @@ const VideoInfo = ({ video }: any) => {
           <Button
             variant="ghost"
             size="sm"
-            className="bg-gray-100 rounded-full"
+            className="bg-muted rounded-full"
             onClick={handleDownload}
           >
             <Download className="w-5 h-5 mr-2" />
@@ -229,13 +229,13 @@ const VideoInfo = ({ video }: any) => {
           <Button
             variant="ghost"
             size="icon"
-            className="bg-gray-100 rounded-full"
+            className="bg-muted rounded-full"
           >
             <MoreHorizontal className="w-5 h-5" />
           </Button>
         </div>
       </div>
-      <div className="bg-gray-100 rounded-lg p-4">
+      <div className="bg-muted rounded-lg p-4">
         <div className="flex gap-4 text-sm font-medium mb-2">
           <span>{(video.views || 0).toLocaleString()} views</span>
           <span>{video.createdAt && formatDistanceToNow(new Date(video.createdAt))} ago</span>

@@ -52,7 +52,7 @@ const Videogrid = () => {
       {loading ? (
         <>Loading..</>
       ) : videos.length === 0 ? (
-        <p className="text-gray-600">No videos uploaded yet.</p>
+        <p className="text-muted-foreground">No videos uploaded yet.</p>
       ) : (
         videos.map((video: any) => <Videocard key={video._id} video={video} />)
       )}

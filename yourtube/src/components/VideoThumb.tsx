@@ -22,7 +22,7 @@ export default function VideoThumb({
           <Lock className="w-3 h-3" />
           Premium
         </div>
-        <p className="text-xs text-gray-400 mt-1 px-3 text-center line-clamp-1">
+        <p className="text-xs text-muted-foreground mt-1 px-3 text-center line-clamp-1">
           {video?.videotitle}
         </p>
       </div>

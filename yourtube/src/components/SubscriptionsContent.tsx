@@ -60,9 +60,9 @@ export default function SubscriptionsContent() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <Crown className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+        <Crown className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
         <h2 className="text-xl font-semibold mb-2">Your subscriptions</h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Sign in to view your subscription plan and account benefits.
         </p>
       </div>
@@ -156,7 +156,7 @@ export default function SubscriptionsContent() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-muted-foreground mb-2">
             <Timer className="w-5 h-5" />
             <p className="text-sm font-medium">Watch time left today</p>
           </div>
@@ -165,14 +165,14 @@ export default function SubscriptionsContent() {
               ? "—"
               : formatRemaining(watchStatus.remainingSeconds)}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {watchStatus?.watchMinutesPerDay === Infinity
               ? "Unlimited per day"
               : `${watchStatus?.watchMinutesPerDay} min per day`}
           </p>
         </div>
         <div className="border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-muted-foreground mb-2">
             <Download className="w-5 h-5" />
             <p className="text-sm font-medium">Downloads left today</p>
           </div>
@@ -181,7 +181,7 @@ export default function SubscriptionsContent() {
               ? "Unlimited"
               : limits?.remaining ?? "—"}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {limits?.usedToday ?? 0} used of{" "}
             {limits?.downloadsPerDay === Infinity
               ? "unlimited"
@@ -189,18 +189,18 @@ export default function SubscriptionsContent() {
           </p>
         </div>
         <div className="border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-muted-foreground mb-2">
             <BadgeCheck className="w-5 h-5" />
             <p className="text-sm font-medium">Ad-free viewing</p>
           </div>
           <p
             className={`text-2xl font-bold ${
-              watchStatus?.adFree ? "text-green-600" : "text-gray-400"
+              watchStatus?.adFree ? "text-green-600" : "text-muted-foreground"
             }`}
           >
             {watchStatus?.adFree ? "Enabled" : "Not included"}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {watchStatus?.adFree
               ? "Enjoy videos with no ads"
               : "Ads may be shown on the free plan"}
@@ -211,19 +211,19 @@ export default function SubscriptionsContent() {
       <div className="overflow-x-auto border rounded-lg">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-gray-50">
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">
+            <tr className="border-b bg-muted">
+              <th className="text-left px-4 py-3 text-muted-foreground font-medium">
                 Features
               </th>
               {planList.map((plan: any) => (
                 <th
                   key={plan.key}
                   className={`px-4 py-3 text-center font-medium ${
-                    plan.key === currentPlan ? "text-red-600" : "text-gray-600"
+                    plan.key === currentPlan ? "text-red-600" : "text-muted-foreground"
                   }`}
                 >
                   <div className="capitalize">{plan.name}</div>
-                  <div className="text-xs font-normal text-gray-500">
+                  <div className="text-xs font-normal text-muted-foreground">
                     {plan.price === 0 ? "Free" : `₹${plan.price}/mo`}
                   </div>
                 </th>
@@ -233,7 +233,7 @@ export default function SubscriptionsContent() {
           <tbody>
             {featureRows.map((row) => (
               <tr key={row.label} className="border-b last:border-0">
-                <td className="px-4 py-3 text-gray-600">{row.label}</td>
+                <td className="px-4 py-3 text-muted-foreground">{row.label}</td>
                 {planList.map((plan: any) => (
                   <td
                     key={plan.key}
@@ -244,7 +244,7 @@ export default function SubscriptionsContent() {
                     <span className="inline-flex items-center gap-1">
                       {row.get(plan) === "Locked" ||
                       row.get(plan) === "No" ? (
-                        <Minus className="w-3.5 h-3.5 text-gray-400" />
+                        <Minus className="w-3.5 h-3.5 text-muted-foreground" />
                       ) : (
                         <Check className="w-3.5 h-3.5 text-green-600" />
                       )}
@@ -258,7 +258,7 @@ export default function SubscriptionsContent() {
         </table>
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         Plan changes apply immediately after a successful payment. Subscriptions
         renew monthly and last until the plan expiry date.{" "}
         <Link href="/upgrade" className="text-blue-600 hover:underline">

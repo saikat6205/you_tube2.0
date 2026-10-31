@@ -7,7 +7,7 @@ import axiosInstance from "@/lib/axiosinstance";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const index = () => {
+const ChannelPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { user } = useUser();
@@ -39,7 +39,7 @@ const index = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 min-h-screen bg-white p-8 text-center">
+      <div className="flex-1 min-h-screen bg-background p-8 text-center">
         Loading channel...
       </div>
     );
@@ -47,9 +47,9 @@ const index = () => {
 
   if (!channel) {
     return (
-      <div className="flex-1 min-h-screen bg-white p-8 text-center">
+      <div className="flex-1 min-h-screen bg-background p-8 text-center">
         <h2 className="text-xl font-semibold mb-2">Channel not found</h2>
-        <p className="text-gray-600">This channel may not exist.</p>
+        <p className="text-muted-foreground">This channel may not exist.</p>
       </div>
     );
   }
@@ -57,7 +57,7 @@ const index = () => {
   const isOwner = user?._id === id;
 
   return (
-    <div className="flex-1 min-h-screen bg-white">
+    <div className="flex-1 min-h-screen bg-background">
       <div className="max-w-full mx-auto">
         <ChannelHeader channel={channel} user={user} />
         <Channeltabs />
@@ -77,4 +77,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default ChannelPage;

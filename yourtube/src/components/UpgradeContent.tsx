@@ -170,11 +170,11 @@ export default function UpgradeContent() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <Crown className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+        <Crown className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
         <h2 className="text-xl font-semibold mb-2">
           Upgrade your YourTube experience
         </h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Sign in to choose a plan and unlock premium features.
         </p>
       </div>
@@ -194,7 +194,7 @@ export default function UpgradeContent() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold mb-1">Upgrade your plan</h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Choose a plan that fits how you watch. Your current plan:{" "}
           <span className="font-medium uppercase">{user.plan || "free"}</span>
         </p>
@@ -229,16 +229,16 @@ export default function UpgradeContent() {
               </div>
               <p className="text-2xl font-bold mb-1">
                 ₹{plan.price}
-                <span className="text-sm font-normal text-gray-500">
+                <span className="text-sm font-normal text-muted-foreground">
                   /month
                 </span>
               </p>
-              <p className="text-sm text-gray-500 mb-4">{plan.tagline}</p>
+              <p className="text-sm text-muted-foreground mb-4">{plan.tagline}</p>
               <ul className="space-y-1.5 mb-6 flex-1">
                 {features.map((feature: string) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-2 text-sm text-gray-700"
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                     {feature}
@@ -285,7 +285,7 @@ export default function UpgradeContent() {
               >
                 <div>
                   <p className="font-medium capitalize">{payment.plan} plan</p>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     {payment.razorpayPaymentId
                       ? `Payment ${payment.razorpayPaymentId}`
                       : `Order ${payment.razorpayOrderId}`}{" "}
@@ -297,12 +297,12 @@ export default function UpgradeContent() {
                     className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
                       payment.status === "paid"
                         ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-600"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {payment.status}
                   </span>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(payment.createdAt))} ago
                   </p>
                 </div>
@@ -312,7 +312,7 @@ export default function UpgradeContent() {
         </div>
       )}
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         Payments are processed securely via Razorpay test mode. After a
         successful payment your plan updates instantly and an invoice is emailed
         to you.{" "}
@@ -323,30 +323,30 @@ export default function UpgradeContent() {
 
       {mockCheckout && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+          <div className="bg-background rounded-xl p-6 w-full max-w-md">
             <div className="flex items-center gap-2 mb-1">
               <Lock className="w-5 h-5 text-amber-500" />
               <h3 className="text-lg font-semibold">Demo checkout (mock)</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Payment gateway not configured — this is a simulated Razorpay
               payment for testing the flow.
             </p>
-            <div className="bg-gray-50 rounded-lg p-4 space-y-1 text-sm mb-5">
+            <div className="bg-muted rounded-lg p-4 space-y-1 text-sm mb-5">
               <p className="flex justify-between">
-                <span className="text-gray-600">Plan</span>
+                <span className="text-muted-foreground">Plan</span>
                 <span className="font-medium capitalize">
                   {plans[mockCheckout.planKey]?.name}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-600">Amount</span>
+                <span className="text-muted-foreground">Amount</span>
                 <span className="font-medium">
                   {mockCheckout.currency} {mockCheckout.amount / 100}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-600">Order</span>
+                <span className="text-muted-foreground">Order</span>
                 <span className="font-medium text-xs">{mockCheckout.orderId}</span>
               </p>
             </div>
