@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "selftest": "node scripts/task5-selftest.mjs && node scripts/task6-selftest.mjs",
+    "selftest": "node scripts/task5-selftest.mjs && node scripts/task6-selftest.mjs && node scripts/party-selftest.mjs",
     "test:comments-live": "node scripts/comment-live-test.mjs",
+    "test:party-live": "node scripts/party-live-test.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -25,6 +26,10 @@
     "multer": "^2.0.1",
     "nodemailer": "^10.0.9",
     "nodemon": "^3.1.10",
-    "razorpay": "^2.9.8"
+    "razorpay": "^2.9.8",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
   }
 }

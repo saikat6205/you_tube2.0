@@ -4,24 +4,29 @@ import { Button } from "./ui/button";
 import {
   Clock,
   Download,
+  Loader2,
   MoreHorizontal,
   Share,
   ThumbsDown,
   ThumbsUp,
+  Users,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@/lib/AuthContext";
 import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const VideoInfo = ({ video }: any) => {
+  const router = useRouter();
   const [likes, setlikes] = useState(video.Like || 0);
   const [dislikes, setDislikes] = useState(video.Dislike || 0);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [isWatchLater, setIsWatchLater] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [creatingParty, setCreatingParty] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -125,6 +130,25 @@ const VideoInfo = ({ video }: any) => {
     }
   };
 
+  const handleWatchParty = async () => {
+    if (!user) return toast.error("Please sign in to start a watch party");
+    if (!video?._id) return;
+    setCreatingParty(true);
+    try {
+      const res = await axiosInstance.post("/party", {
+        videoId: video._id,
+      });
+      const path = res.data?.joinPath || `/party/${res.data?.code}`;
+      router.push(path);
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Could not start a watch party"
+      );
+    } finally {
+      setCreatingParty(false);
+    }
+  };
+
   const handleDownload = async () => {
     if (!user) return toast.error("Please sign in to download videos");
     try {
@@ -151,7 +175,7 @@ const VideoInfo = ({ video }: any) => {
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">{video.videotitle}</h1>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <Avatar className="w-10 h-10">
             <AvatarFallback>{video.videochanel?.[0]}</AvatarFallback>
@@ -168,7 +192,7 @@ const VideoInfo = ({ video }: any) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center bg-muted rounded-full">
             <Button
               variant="ghost"
@@ -198,6 +222,20 @@ const VideoInfo = ({ video }: any) => {
               {(dislikes || 0).toLocaleString()}
             </Button>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-muted rounded-full"
+            onClick={handleWatchParty}
+            disabled={creatingParty}
+          >
+            {creatingParty ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <Users className="w-5 h-5 mr-2" />
+            )}
+            Watch party
+          </Button>
           <Button
             variant="ghost"
             size="sm"
