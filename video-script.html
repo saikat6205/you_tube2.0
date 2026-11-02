@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YourTube - Final Demo Script</title>
+<style>
+  :root {
+    --ink: #13202e;
+    --muted: #5d6b7a;
+    --line: #dbe3ea;
+    --paper: #ffffff;
+    --wash: #f4f7fa;
+    --red: #d93025;
+    --green: #137a4b;
+    --green-wash: #eaf7f0;
+    --amber: #a15c00;
+    --blue: #1d5f9f;
+    --violet: #6b3fa0;
+    --teal: #0f766e;
+    --gold: #8a6500;
+    --orange: #b54708;
+    --pink: #a3195b;
+    --slate: #334155;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: #e8edf2; }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 10% 0%, rgba(217, 48, 37, 0.13), transparent 26rem),
+      radial-gradient(circle at 100% 12%, rgba(29, 95, 159, 0.12), transparent 24rem),
+      #e8edf2;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: min(100%, 920px);
+    margin: 0 auto;
+    padding: 22px 14px 44px;
+  }
+
+  .hero {
+    padding: 28px 24px;
+    border-radius: 22px;
+    color: #fff;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.12), transparent 48%),
+      linear-gradient(135deg, #a4161a 0%, #d93025 52%, #ef7b16 100%);
+    box-shadow: 0 18px 44px rgba(34, 45, 58, 0.18);
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
+  .hero p {
+    max-width: 46rem;
+    margin: 12px 0 0;
+    color: rgba(255,255,255,0.93);
+    font-size: 0.98rem;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    border: 1px solid rgba(255,255,255,0.34);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+  }
+
+  .panel {
+    margin-top: 18px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--paper);
+    box-shadow: 0 8px 24px rgba(34, 45, 58, 0.06);
+  }
+
+  .panel h2 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    letter-spacing: -0.015em;
+  }
+
+  .panel .sub {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .checklist {
+    display: grid;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 30px;
+    color: #253546;
+    font-size: 0.9rem;
+  }
+
+  .checklist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #58a77e;
+    border-radius: 5px;
+    background: var(--green-wash);
+  }
+
+  .checklist li::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0.28em;
+    width: 8px;
+    height: 4px;
+    border-left: 2px solid var(--green);
+    border-bottom: 2px solid var(--green);
+    transform: rotate(-45deg);
+  }
+
+  .prep {
+    border-color: #b9dfca;
+    background: linear-gradient(180deg, #f5fcf8 0%, #ffffff 72%);
+  }
+
+  .prep h2 { color: var(--green); }
+
+  .note {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-left: 4px solid #e3a008;
+    border-radius: 8px;
+    background: #fff8e6;
+    color: #5e4708;
+    font-size: 0.84rem;
+  }
+
+  .timeline {
+    display: grid;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .card {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--paper);
+    box-shadow: 0 8px 24px rgba(34, 45, 58, 0.06);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--wash);
+  }
+
+  .card-head h2 {
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: -0.015em;
+  }
+
+  .time {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .duration {
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--accent, var(--red));
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .card-body {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .on-screen {
+    padding: 14px 14px 14px 16px;
+    border: 2px dashed #b9c3cd;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #405063;
+    font-size: 0.87rem;
+  }
+
+  .on-screen strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #667487;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .on-screen ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .on-screen li + li { margin-top: 4px; }
+
+  .say {
+    position: relative;
+    padding: 15px 16px 15px 19px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e5ebf1;
+    font-size: 1rem;
+    line-height: 1.62;
+    break-inside: avoid;
+  }
+
+  .say::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 5px;
+    border-radius: 5px;
+    background: var(--accent, var(--red));
+  }
+
+  .say-label {
+    display: inline-block;
+    margin-bottom: 5px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: var(--accent, var(--red));
+    color: #fff;
+    font-size: 0.64rem;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .say p { margin: 0; }
+
+  .split {
+    display: grid;
+    gap: 14px;
+  }
+
+  .accent-red { --accent: var(--red); }
+  .accent-amber { --accent: var(--amber); }
+  .accent-blue { --accent: var(--blue); }
+  .accent-violet { --accent: var(--violet); }
+  .accent-teal { --accent: var(--teal); }
+  .accent-gold { --accent: var(--gold); }
+  .accent-orange { --accent: var(--orange); }
+  .accent-pink { --accent: var(--pink); }
+  .accent-slate { --accent: var(--slate); }
+  .accent-green { --accent: var(--green); }
+
+  .warning {
+    border-color: #f0c7c2;
+    background: linear-gradient(180deg, #fff7f6 0%, #ffffff 80%);
+  }
+
+  .warning h2 { color: #a4161a; }
+
+  .warning ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.88rem;
+  }
+
+  .warning li + li { margin-top: 7px; }
+
+  .footer {
+    margin-top: 20px;
+    color: #687685;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  @media (min-width: 720px) {
+    .page { padding: 34px 28px 56px; }
+    .hero { padding: 36px 34px; }
+    .split { grid-template-columns: 1.05fr 1fr; align-items: start; }
+    .card-body { padding: 20px; }
+  }
+
+  @media print {
+    @page { size: A5; margin: 10mm; }
+
+    html, body {
+      background: #fff !important;
+      font-size: 10.2pt;
+    }
+
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 100%;
+      padding: 0;
+    }
+
+    .hero {
+      border-radius: 14px;
+      box-shadow: none;
+      padding: 20px;
+    }
+
+    .panel, .card {
+      box-shadow: none;
+    }
+
+    .card, .say, .on-screen, .panel {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .card-head {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .footer {
+      break-before: avoid;
+      page-break-before: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">Final internship demo</p>
+    <h1>YourTube<br>Live Demo Script</h1>
+    <p>A code-grounded walkthrough of the working product: accounts, playback, libraries, comments, plans, uploads and real-time watch parties.</p>
+    <div class="pills">
+      <span class="pill">Target 4:50</span>
+      <span class="pill">Hard cap 5:00</span>
+      <span class="pill">7 feature blocks</span>
+      <span class="pill">30s security</span>
+      <span class="pill">~660 spoken words</span>
+    </div>
+  </header>
+
+  <section class="panel prep">
+    <h2>Before you hit record</h2>
+    <p class="sub">Run the whole sequence once. Reset any state you consume.</p>
+    <ul class="checklist">
+      <li>Backend on <strong>:5000</strong> and frontend on <strong>:3000</strong>; both healthy.</li>
+      <li>Main Chrome signed in as the demo user; second test user signed in in a separate window.</li>
+      <li>Pre-open an incognito window at the OTP dialog, plus the admin moderation queue.</li>
+      <li>Seed one normal video, one premium video, one non-English comment and one flagged comment.</li>
+      <li>Prepare a small MP4 under 100 MB, a test channel, and a reset download/watch allowance.</li>
+      <li>Confirm whether checkout is mock or Razorpay test mode, and which button appears.</li>
+      <li>Grant camera/microphone permission in both party windows; close other apps using them.</li>
+      <li>Hide bookmarks, terminal output, email inbox, API keys, <strong>.env</strong> and dashboard secrets.</li>
+      <li>Use 1080p, 100% browser zoom, a clean desktop and a slow, deliberate cursor.</li>
+      <li>Rehearse with a timer; aim to finish at <strong>4:40-4:50</strong>, never past 5:00.</li>
+    </ul>
+    <div class="note">Only speak the <strong>SAY</strong> text. The grey boxes are stage directions and must not be read aloud.</div>
+  </section>
+
+  <div class="timeline">
+    <article class="card accent-red">
+      <div class="card-head">
+        <h2>Intro</h2>
+        <div class="time">0:00-0:15</div>
+        <span class="duration">15 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Start on the YourTube home page, signed in.</li>
+            <li>Slowly scroll the video grid once; keep the cursor still while speaking.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Hi, I'm [Your Name]. This is YourTube, a full-stack video platform built with Next.js, React, Express, MongoDB, Socket.IO and WebRTC. I'll show the working product: accounts, video, plans, comments, uploads and watch parties.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-amber">
+      <div class="card-head">
+        <h2>Account security and personalization</h2>
+        <div class="time">0:15-0:45</div>
+        <span class="duration">30 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Open the profile menu, then toggle the theme once and return to the same page.</li>
+            <li>Switch briefly to the prepared incognito window showing the "Verify it's you" OTP dialog, then return.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Sign-in uses Google through Firebase. The backend verifies Firebase's signed ID token before issuing a seven-day JWT. On a new browser, device ID, user-agent hash and coarse city or state are checked; unknown combinations require a six-digit email OTP. Verified devices are remembered. Theme is account-level: auto light from ten to noon IST, otherwise dark, and manual choices persist.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-blue">
+      <div class="card-head">
+        <h2>Discovery, streaming and plan gates</h2>
+        <div class="time">0:45-1:20</div>
+        <span class="duration">35 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Use the header search, open a normal video, then seek once in the player.</li>
+            <li>Hover the player controls; show the free-plan ad-free notice.</li>
+            <li>Open the prepared premium video and show the locked upgrade screen.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Home loads every video from MongoDB in a responsive grid; header search matches title or channel. Opening a video uses an authenticated streaming endpoint with HTTP range support, so playback can seek without downloading the whole file. Free plans get sixty minutes of watch time, tracked by backend heartbeats. Premium videos show a locked screen unless the plan includes premium access, and free users see an upgrade prompt instead of an ad-free badge.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-violet">
+      <div class="card-head">
+        <h2>Personal library and engagement</h2>
+        <div class="time">1:20-1:50</div>
+        <span class="duration">30 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Like the video, save it to Watch Later, then click Download once and cancel the browser save dialog.</li>
+            <li>Rapid cuts through Liked, History, Watch Later and Downloads.</li>
+            <li>End on Subscriptions to show remaining watch time and downloads.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Likes and dislikes are paired toggles that update the stored counters; Watch Later and History are per-user collections. History records the first view but still increments the video's view count on each watch. Downloads shows the current plan's daily quota and download history, while Subscriptions combines remaining watch time, remaining downloads and plan benefits. Saved items can be removed or reopened.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-teal">
+      <div class="card-head">
+        <h2>Comments, translation and moderation</h2>
+        <div class="time">1:50-2:20</div>
+        <span class="duration">30 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Post a short prepared comment; react to it; click Translate on the non-English comment.</li>
+            <li>Open the Report dialog, choose a reason, then close it without submitting.</li>
+            <li>Cut to the admin moderation queue and show Approve and Remove.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Comments are more than a text box. Each post is checked for length, abuse, spam and duplicates before storage. The server detects language and returns aggregate reactions plus the viewer's own state. Users can edit or delete their own comments, react, report with a reason, and translate any comment. Location is opt-in and coarse: state and country, never GPS. Three reports flag a comment for admin review; nothing is deleted automatically.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-gold">
+      <div class="card-head">
+        <h2>Plans, checkout and billing</h2>
+        <div class="time">2:20-2:50</div>
+        <span class="duration">30 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Open Upgrade and compare the four plan cards.</li>
+            <li>Start Bronze checkout; use the labelled demo checkout or Razorpay test checkout.</li>
+            <li>After success, show the updated plan and payment history.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>The upgrade page pulls plans from the backend and compares Free, Bronze, Silver and Gold by price, daily downloads, watch minutes, premium access and ad-free entitlement. Checkout uses Razorpay when keys exist; otherwise a labelled mock checkout exercises the same flow. The backend verifies Razorpay's HMAC signature, upgrades the user for one month, emails an invoice, and records the payment. Verification is idempotent, so repeated callbacks cannot double-upgrade.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-orange">
+      <div class="card-head">
+        <h2>Channel and creator upload</h2>
+        <div class="time">2:50-3:20</div>
+        <span class="duration">30 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Open the profile menu to point out "Create Channel", then open the prepared channel.</li>
+            <li>Select the small MP4, add a title, toggle Premium, click Upload, show progress and success.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Users can create a channel from the profile menu. The page shows the owner's description and uploads. Owners also get an upload panel: title, a one-hundred-megabyte MP4 limit, and a premium-only switch. Multer stores the file, the backend saves metadata and marks the video premium when requested, and it appears on the channel. The uploader is intentionally limited to MP4, matching the server's file filter.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-pink">
+      <div class="card-head">
+        <h2>Real-time watch party</h2>
+        <div class="time">3:20-4:00</div>
+        <span class="duration">40 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Two windows side by side. Host clicks Watch party; guest opens the copied invite link.</li>
+            <li>Host plays and pauses; guest confirms sync. Guest sends one chat message.</li>
+            <li>Host joins the video call; briefly toggle mute and camera, then share screen for two seconds.</li>
+            <li>Host starts and stops a two-second local recording, then ends the party.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>From any video, Create Party returns a six-character code and shareable link. Everyone joins through authenticated Socket.IO; rooms are capped at eight people, and empty parties expire after ten minutes. Play, pause and seek are broadcast, and late joiners use server time to sync. Chat is rate-limited to five messages per five seconds. The call uses WebRTC mesh, with Socket.IO relaying offers, answers and ICE candidates. The host can share their screen, record a local WebM and end the party for everyone.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-slate">
+      <div class="card-head">
+        <h2>Architecture and security</h2>
+        <div class="time">4:00-4:35</div>
+        <span class="duration">35 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Cut to VS Code with four files prepared: auth middleware, OTP utility, comment validation and party store.</li>
+            <li>Highlight the JWT verify, HMAC hash, rate-limit and TTL lines only. Do not open <strong>.env</strong>.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>Architecture-wise, a Next.js frontend talks to Express and MongoDB, with Socket.IO on the same HTTP server. Identity is layered: Firebase proves the Google account, the backend issues its own JWT, and every protected route re-verifies it. OTP codes are random, HMAC-hashed in memory, single-use, expire in five minutes, and are capped per email and IP. Auth and comment routes are rate-limited. WebRTC media is peer-to-peer; the server never carries audio or video. Party state is intentionally in-memory, limiting it to one Node instance.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card accent-green">
+      <div class="card-head">
+        <h2>Close</h2>
+        <div class="time">4:35-4:50</div>
+        <span class="duration">15 sec</span>
+      </div>
+      <div class="card-body">
+        <div class="on-screen">
+          <strong>On screen</strong>
+          <ul>
+            <li>Return to the YourTube home page; stop moving the cursor.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <span class="say-label">Say</span>
+          <p>That's YourTube: authenticated streaming, plan-gated features, moderated comments, uploads, payments and real-time watch parties. The next step would be Redis for party state and object storage plus a CDN for media. Thanks for watching.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <section class="panel warning">
+    <h2>Do not claim or demo</h2>
+    <p class="sub">These are real limitations in the current build. Avoid accidental overclaiming.</p>
+    <ul>
+      <li>The category strip changes its selected style only; it does not filter the home grid.</li>
+      <li>The Subscribe button on a channel is client-side only; it is not persisted.</li>
+      <li>There is no ad-delivery system. Plans control the <strong>adFree</strong> entitlement and UI badge.</li>
+      <li>The upload form lists several formats, but the server accepts MP4 only. Demo an MP4.</li>
+      <li>The 100 MB upload check is client-side; the server has no matching size cap.</li>
+      <li>History and download-list reads are not auth-gated in the current code; avoid claiming every read is protected.</li>
+      <li>Watch-party rooms live in memory on one Node process; they do not survive a restart or scale across instances.</li>
+      <li>If Razorpay keys are absent and mock mode is off, checkout returns a configuration error. Verify the mode before recording.</li>
+      <li>Never show <strong>.env</strong>, terminal logs, API keys, Razorpay secrets or the email inbox on camera.</li>
+    </ul>
+  </section>
+
+  <p class="footer">YourTube final demo script - built from the current repository and its verified feature set.</p>
+</main>
+</body>
+</html>
